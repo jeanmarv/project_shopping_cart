@@ -1,10 +1,11 @@
-// const getListCarrinho = document.querySelector('.cart__items');
-// const getClearButtom = document.querySelector('.empty-cart');
-// const getLoading = document.querySelector('.loading');// tem algo errado com os gets, req 7 deletar loading
+const getLoading = document.querySelector('.loading');
+const getListCarrinho = document.querySelector('.cart__items');
+const getClearButtom = document.querySelector('.empty-cart');
+const getSomatorio = document.querySelector('.total-price');
 
-// function saveStorage () {
-//   localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
-// }
+function saveStorage() {
+  localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
+}
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -20,9 +21,20 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
+let somatorio = 0;
+const somando = (valor) => {
+  somatorio += valor;
+  somatorio = parseFloat(somatorio.toFixed(2));
+  getSomatorio.innerHTML = Math.abs(somatorio);
+};
+
 function cartItemClickListener(event) {
+  const valorClicado = event.target.innerHTML;
+  const indiceValor = valorClicado.indexOf('$');
+  const valorRemovido = valorClicado.slice(indiceValor + 1);
+  somando(-parseFloat(valorRemovido));
   event.target.remove();
-  // saveStorage(); // para o req 4
+  saveStorage(); // para o req 4
 }
 
 function createCartItemElement(sku, name, salePrice) {
@@ -30,18 +42,9 @@ function createCartItemElement(sku, name, salePrice) {
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
-  // saveStorage(); // req 4
+  somando(salePrice);
+  saveStorage(); // req 4
   return li;
-}
-
-let somatorio = 0;
-const somando = (valor) =>  {
-  const getSomatorio = document.querySelector('.total-price');
-  somatorio += Math.round(valor);
-  const valorSomado = document.createElement('li');
-  valorSomado.innerHTML = `Valor total compra: $${somatorio}`;  // nao passou no teste e nao esta de forma assincrona req 5
-  getSomatorio.innerHTML = '';
-  getSomatorio.appendChild(valorSomado);
 }
 
 const fetchMLitems = async (itemID) => {
@@ -49,12 +52,9 @@ const fetchMLitems = async (itemID) => {
     `https://api.mercadolibre.com/items/${itemID}`,
   );
   const listItemJson = await listItem.json();
-  const getCartItem = document.querySelector('.cart__items');
-
-    getCartItem.appendChild(createCartItemElement(
-      listItemJson.id, listItemJson.title, listItemJson.base_price,
+  getListCarrinho.appendChild(createCartItemElement(
+      listItemJson.id, listItemJson.title, listItemJson.price,
       ));
-      somando(listItemJson.base_price);// parte do req 5
 };
 
 function createProductItemElement(sku, name, image) {
@@ -85,15 +85,18 @@ const fetchML = async (option) => {
       produtoFinal.id, produtoFinal.title, produtoFinal.thumbnail,
       ));
   });
+  getLoading.remove();
 };
 
-// document.querySelector('.empty-cart').addEventListener('clicl', () => {
-//   getListCarrinho.innerHTML = '';                    requisito 6 botao limpar
-//  saveStorage(); // req 4
-// });
+getClearButtom.addEventListener('click', () => {
+  getListCarrinho.innerHTML = '';//                    requisito 6 botao limpar
+  getSomatorio.innerText = '';
+  somatorio = 0;
+  saveStorage(); // req 4
+});
 
 window.onload = () => {
   fetchML('computador');
-  // const listaSalva = localStorage.getItem('cartItems');
-  // getListCarrinho.innerHTML = listaSalva; // requisito 4 salvar lista
+  const listaSalva = localStorage.getItem('cartItems');
+  getListCarrinho.innerHTML = listaSalva; // requisito 4 salvar lista
  };

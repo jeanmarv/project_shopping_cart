@@ -8,7 +8,6 @@ const getSomatorio = document.querySelector('.total-price');
 //   localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
 // }
 
-
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';

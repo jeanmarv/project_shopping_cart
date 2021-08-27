@@ -4,9 +4,9 @@ const getAllCarrinho = document.querySelectorAll('.cart__items');
 const getClearButtom = document.querySelector('.empty-cart');
 const getSomatorio = document.querySelector('.total-price');
 
-// function saveStorage() {
-//   localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
-// }
+function saveStorage() {
+  localStorage.setItem('cartItems', getListCarrinho.innerHTML);
+}
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -35,9 +35,7 @@ function cartItemClickListener(event) {
   const valorRemovido = valorClicado.slice(indiceValor + 1);
   somando(-parseFloat(valorRemovido));
   event.target.remove();
-  const allCartItems = getListCarrinho;
-  localStorage.setItem('cart_items', allCartItems.innerHTML);
-  // saveStorage(); // para o req 4
+  saveStorage();
 }
 
 function createCartItemElement(sku, name, salePrice) {
@@ -46,7 +44,6 @@ function createCartItemElement(sku, name, salePrice) {
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
   somando(salePrice);
-  // saveStorage(); // req 4
   return li;
 }
 
@@ -58,7 +55,7 @@ const fetchMLitems = async (itemID) => {
   getListCarrinho.appendChild(createCartItemElement(
       listItemJson.id, listItemJson.title, listItemJson.price,
       ));
-    localStorage.setItem('cart_items', getListCarrinho.innerHTML);
+    saveStorage();
 };
 
 function createProductItemElement(sku, name, image) {
@@ -93,18 +90,16 @@ const fetchML = async (option) => {
 };
 
 getClearButtom.addEventListener('click', () => {
-  getListCarrinho.innerHTML = '';//                    requisito 6 botao limpar
+  getListCarrinho.innerHTML = '';
   getSomatorio.innerText = '';
   somatorio = 0;
-  // saveStorage(); // req 4
+  saveStorage();
 });
 
 window.onload = () => {
   fetchML('computador');
-  // const listaSalva = localStorage.getItem('cartItems');
-  // getListCarrinho.innerHTML = listaSalva; // requisito 4 salvar lista
   if (localStorage.length > 0) {
-    getListCarrinho.innerHTML = localStorage.getItem('cart_items');
+    getListCarrinho.innerHTML = localStorage.getItem('cartItems');
     getAllCarrinho.forEach((item) => {
       item.addEventListener('click', cartItemClickListener);
     });

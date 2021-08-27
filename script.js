@@ -1,11 +1,13 @@
 const getLoading = document.querySelector('.loading');
 const getListCarrinho = document.querySelector('.cart__items');
+const getAllCarrinho = document.querySelectorAll('.cart__items');
 const getClearButtom = document.querySelector('.empty-cart');
 const getSomatorio = document.querySelector('.total-price');
 
-function saveStorage() {
-  localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
-}
+// function saveStorage() {
+//   localStorage.setItem('cartItems', getListCarrinho.innerHTML); // requisito 4 para salvar os dados no localstorage;
+// }
+
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -34,7 +36,9 @@ function cartItemClickListener(event) {
   const valorRemovido = valorClicado.slice(indiceValor + 1);
   somando(-parseFloat(valorRemovido));
   event.target.remove();
-  saveStorage(); // para o req 4
+  const allCartItems = getListCarrinho;
+  localStorage.setItem('cart_items', allCartItems.innerHTML);
+  // saveStorage(); // para o req 4
 }
 
 function createCartItemElement(sku, name, salePrice) {
@@ -43,7 +47,7 @@ function createCartItemElement(sku, name, salePrice) {
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
   somando(salePrice);
-  saveStorage(); // req 4
+  // saveStorage(); // req 4
   return li;
 }
 
@@ -55,6 +59,7 @@ const fetchMLitems = async (itemID) => {
   getListCarrinho.appendChild(createCartItemElement(
       listItemJson.id, listItemJson.title, listItemJson.price,
       ));
+    localStorage.setItem('cart_items', getListCarrinho.innerHTML);
 };
 
 function createProductItemElement(sku, name, image) {
@@ -92,11 +97,17 @@ getClearButtom.addEventListener('click', () => {
   getListCarrinho.innerHTML = '';//                    requisito 6 botao limpar
   getSomatorio.innerText = '';
   somatorio = 0;
-  saveStorage(); // req 4
+  // saveStorage(); // req 4
 });
 
 window.onload = () => {
   fetchML('computador');
-  const listaSalva = localStorage.getItem('cartItems');
-  getListCarrinho.innerHTML = listaSalva; // requisito 4 salvar lista
+  // const listaSalva = localStorage.getItem('cartItems');
+  // getListCarrinho.innerHTML = listaSalva; // requisito 4 salvar lista
+  if (localStorage.length > 0) {
+    getListCarrinho.innerHTML = localStorage.getItem('cart_items');
+    getAllCarrinho.forEach((item) => {
+      item.addEventListener('click', cartItemClickListener);
+    });
+  }
  };
